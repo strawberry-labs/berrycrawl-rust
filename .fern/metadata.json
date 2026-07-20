@@ -9,9 +9,9 @@
     "packageRepository": "https://github.com/strawberry-labs/berrycrawl-rust",
     "packageDocumentation": "https://docs.berrycrawl.com"
   },
-  "originGitCommit": "c95262eeaa2188391010af60409ba4c9d6c2e769",
+  "originGitCommit": "70780c2043f50f399329b003aaf2dbac2584d072",
   "originGitCommitIsDirty": false,
   "invokedBy": "ci",
-  "requestedVersion": "0.1.2",
+  "requestedVersion": "0.2.0",
   "ciProvider": "github"
 }

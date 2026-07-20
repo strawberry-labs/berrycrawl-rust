@@ -1,13 +1,12 @@
 pub use crate::prelude::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct SearchResponse {
     #[serde(rename = "creditsUsed")]
     #[serde(default)]
     pub credits_used: i64,
     #[serde(default)]
     pub data: Vec<SearchResult>,
-    pub provider: SearchResponseProvider,
     #[serde(default)]
     pub query: String,
     #[serde(default)]
@@ -27,7 +26,6 @@ impl SearchResponse {
 pub struct SearchResponseBuilder {
     credits_used: Option<i64>,
     data: Option<Vec<SearchResult>>,
-    provider: Option<SearchResponseProvider>,
     query: Option<String>,
     success: Option<bool>,
     total: Option<i64>,
@@ -41,11 +39,6 @@ impl SearchResponseBuilder {
 
     pub fn data(mut self, value: Vec<SearchResult>) -> Self {
         self.data = Some(value);
-        self
-    }
-
-    pub fn provider(mut self, value: SearchResponseProvider) -> Self {
-        self.provider = Some(value);
         self
     }
 
@@ -68,7 +61,6 @@ impl SearchResponseBuilder {
     /// This method will fail if any of the following fields are not set:
     /// - [`credits_used`](SearchResponseBuilder::credits_used)
     /// - [`data`](SearchResponseBuilder::data)
-    /// - [`provider`](SearchResponseBuilder::provider)
     /// - [`query`](SearchResponseBuilder::query)
     /// - [`success`](SearchResponseBuilder::success)
     /// - [`total`](SearchResponseBuilder::total)
@@ -78,9 +70,6 @@ impl SearchResponseBuilder {
                 .credits_used
                 .ok_or_else(|| BuildError::missing_field("credits_used"))?,
             data: self.data.ok_or_else(|| BuildError::missing_field("data"))?,
-            provider: self
-                .provider
-                .ok_or_else(|| BuildError::missing_field("provider"))?,
             query: self
                 .query
                 .ok_or_else(|| BuildError::missing_field("query"))?,

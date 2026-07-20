@@ -2,8 +2,6 @@ pub use crate::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct SearchResult {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub provider: Option<SearchResultProvider>,
     #[serde(rename = "publishedDate")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub published_date: Option<String>,
@@ -26,7 +24,6 @@ impl SearchResult {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct SearchResultBuilder {
-    provider: Option<SearchResultProvider>,
     published_date: Option<String>,
     snippet: Option<String>,
     source: Option<String>,
@@ -35,11 +32,6 @@ pub struct SearchResultBuilder {
 }
 
 impl SearchResultBuilder {
-    pub fn provider(mut self, value: SearchResultProvider) -> Self {
-        self.provider = Some(value);
-        self
-    }
-
     pub fn published_date(mut self, value: impl Into<String>) -> Self {
         self.published_date = Some(value.into());
         self
@@ -73,7 +65,6 @@ impl SearchResultBuilder {
     /// - [`url`](SearchResultBuilder::url)
     pub fn build(self) -> Result<SearchResult, BuildError> {
         Ok(SearchResult {
-            provider: self.provider,
             published_date: self.published_date,
             snippet: self
                 .snippet
