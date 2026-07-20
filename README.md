@@ -1,9 +1,10 @@
-# Berrycrawl Rust Library
+# Berrycrawl Rust SDK
 
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=Berrycrawl%2FRust)
 [![crates.io shield](https://img.shields.io/crates/v/berrycrawl)](https://crates.io/crates/berrycrawl)
 
-The Berrycrawl Rust library provides convenient access to the Berrycrawl APIs from Rust.
+The official Rust SDK for scraping, crawling, searching, mapping, structured extraction, screenshots, and brand profiles.
+
+[Documentation](https://docs.berrycrawl.com) · [Dashboard](https://app.berrycrawl.com) · [GitHub](https://github.com/strawberry-labs/berrycrawl-rust)
 
 ## Table of Contents
 
@@ -41,30 +42,55 @@ A full reference for this library is available [here](./reference.md).
 
 ## Usage
 
-Instantiate and use the client with the following:
+Set `BERRYCRAWL_API_KEY` to an API key from the [Berrycrawl dashboard](https://app.berrycrawl.com).
 
 ```rust
 use berrycrawl::prelude::*;
 
 #[tokio::main]
-async fn main() {
-    let config = ClientConfig {
-        token: Some("<token>".to_string()),
+async fn main() -> Result<(), ApiError> {
+    let client = Berrycrawl::new(ClientConfig {
+        token: std::env::var("BERRYCRAWL_API_KEY").ok(),
         ..Default::default()
-    };
-    let client = Berrycrawl::new(config).expect("Failed to build client");
-    client
-        .brand
-        .retrieve(
-            &BrandDto {
-                url: "https://stripe.com".to_string(),
-                refresh: None,
-                timeout: None,
-            },
-            None,
-        )
-        .await;
+    }).expect("valid Berrycrawl configuration");
+
+    let page = client.scrape(
+        &ScrapeDto {
+            url: Some("https://example.com/pricing".to_string()),
+            ..Default::default()
+        },
+        None,
+    ).await?;
+
+    println!("{:?}", page);
+    Ok(())
 }
+```
+
+### Crawl a website
+
+```rust
+let job = client.crawl(
+    &CrawlDto {
+        url: "https://example.com/docs".to_string(),
+        limit: Some(50.0),
+        ..Default::default()
+    },
+    None,
+).await?;
+```
+
+### Retrieve a brand profile
+
+```rust
+let brand = client.brand.retrieve(
+    &BrandDto {
+        url: "https://stripe.com".to_string(),
+        refresh: None,
+        timeout: None,
+    },
+    None,
+).await?;
 ```
 
 ## Environments
@@ -78,7 +104,7 @@ let config = ClientConfig {
     base_url: Environment::Production.url().to_string(),
     ..Default::default()
 };
-let client = Client::new(config).expect("Failed to build client");
+let client = Berrycrawl::new(config).expect("Failed to build client");
 ```
 
 ## Errors
