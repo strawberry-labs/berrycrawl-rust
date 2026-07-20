@@ -93,6 +93,10 @@ let brand = client.brand.retrieve(
 ).await?;
 ```
 
+### Brand design system
+
+Brand responses include an optional `branding` object for compatibility with older API deployments. When available, it contains the rendered light/dark scheme, semantic colors, typography, spacing, representative input and button styles, and semantic image roles. Use `branding.images.favicon` for the square icon and `branding.images.logo` for the wordmark.
+
 ## Environments
 
 This SDK allows you to configure different environments for API requests.

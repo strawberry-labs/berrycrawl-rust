@@ -1,7 +1,9 @@
 pub use crate::prelude::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct BrandProfile {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub branding: Option<BrandDesignSystem>,
     #[serde(default)]
     pub colors: Vec<BrandProfileColorsItem>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -33,6 +35,7 @@ impl BrandProfile {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct BrandProfileBuilder {
+    branding: Option<BrandDesignSystem>,
     colors: Option<Vec<BrandProfileColorsItem>>,
     description: Option<String>,
     domain: Option<String>,
@@ -46,6 +49,11 @@ pub struct BrandProfileBuilder {
 }
 
 impl BrandProfileBuilder {
+    pub fn branding(mut self, value: BrandDesignSystem) -> Self {
+        self.branding = Some(value);
+        self
+    }
+
     pub fn colors(mut self, value: Vec<BrandProfileColorsItem>) -> Self {
         self.colors = Some(value);
         self
@@ -107,6 +115,7 @@ impl BrandProfileBuilder {
     /// - [`socials`](BrandProfileBuilder::socials)
     pub fn build(self) -> Result<BrandProfile, BuildError> {
         Ok(BrandProfile {
+            branding: self.branding,
             colors: self
                 .colors
                 .ok_or_else(|| BuildError::missing_field("colors"))?,
